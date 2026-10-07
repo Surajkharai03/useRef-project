@@ -2,32 +2,34 @@ import React, { useRef, useState } from 'react'
 
 const App = () => {
   const [time, settime] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+
   const timerRef = useRef(null);
 
   const startTimer = () => {
 
-  if (timerRef.current !== null) {
-    return;
-  }
+    // Prevent multiple timers from running
+    if (timerRef.current !== null) {
+      return;
+    }
 
-  timerRef.current = setInterval(() => {     // value ko hmne persist(stay/continue) kr diya
-    settime(time => time + 1);
-  }, 1000);
-}
-  
-  
-  
-  
-  
+    setIsRunning(true);
+
+    timerRef.current = setInterval(() => {  // value ko hmne persist(stay/continue) kr diya
+      settime(time => time + 1)
+    }, 1000);
+  }
 
   const stopTimer = () => {
     clearInterval(timerRef.current);
     timerRef.current = null;
+
+    setIsRunning(false);
   }
 
   const resetTimer = () => {
     stopTimer();
-    settime(0)
+    settime(0);
   }
 
   return (
@@ -37,6 +39,7 @@ const App = () => {
 
         {/* Heading */}
         <div className="text-center mb-8">
+
           <p className="text-gray-500 uppercase tracking-[0.3em] text-sm mb-3">
             Stopwatch
           </p>
@@ -48,24 +51,50 @@ const App = () => {
           <p className="text-gray-500 mt-2">
             seconds
           </p>
+
         </div>
+
 
         {/* Timer Circle */}
         <div className="flex justify-center mb-8">
-          <div className="w-48 h-48 rounded-full border-4 border-gray-700 flex items-center justify-center">
 
-            <div className="text-center">
-              <span className="text-4xl font-semibold text-white">
-                {time}
-              </span>
+          <div className="relative w-48 h-48">
 
-              <p className="text-gray-500 text-sm">
-                SEC
-              </p>
+            {/* Outer Circle */}
+            <div className="absolute inset-0 rounded-full border-4 border-gray-700">
+            </div>
+
+
+            {/* Running Line */}
+            <div
+              className={`absolute inset-[-4px] rounded-full border-4 border-transparent border-t-green-400 ${
+                isRunning ? "animate-spin" : ""
+              }`}
+            >
+            </div>
+
+
+            {/* Timer Content */}
+            <div className="absolute inset-0 flex items-center justify-center">
+
+              <div className="text-center">
+
+                <span className="text-4xl font-semibold text-white">
+                  {time}
+                </span>
+
+                <p className="text-gray-500 text-sm">
+                  SEC
+                </p>
+
+              </div>
+
             </div>
 
           </div>
+
         </div>
+
 
         {/* Buttons */}
         <div className="grid grid-cols-3 gap-3">
@@ -77,12 +106,14 @@ const App = () => {
             Start
           </button>
 
+
           <button
             onClick={stopTimer}
             className="bg-yellow-500 hover:bg-yellow-400 text-black font-semibold py-3 rounded-xl transition duration-200 active:scale-95"
           >
             Stop
           </button>
+
 
           <button
             onClick={resetTimer}
@@ -92,6 +123,7 @@ const App = () => {
           </button>
 
         </div>
+
 
         {/* Bottom text */}
         <p className="text-center text-gray-600 text-sm mt-6">
